@@ -1,0 +1,8 @@
+./sqlx
+./go-sqlite3/
+./edwards25519/
+./mysql/
+./pq/
+./LOGS
+./DB
+./datos
