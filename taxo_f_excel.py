@@ -127,8 +127,8 @@ def proc_df(table: str, df: pd.DataFrame, c:sqlite3.Cursor):
     qs = manage_diffs(mins, table)
     
     for q in qs.values():
-        res = c.execute(q)
-        print("UPDATE DONE =>> ", res)
+        c.execute(q)
+        print("UPDATE DONE")
 
     # with open(RESULTADOS/"min_diffs.json", "w") as f:
     #     json.dump(qs, f, indent=2)

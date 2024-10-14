@@ -16,15 +16,15 @@ import (
 )
 
 var (
-	ih08_file  string
-	ih08_trans string
+	ih08_file   string
+	ih08_trans  string
 	taxo_report string
-	db         dbops.DB
-	parseIH08  bool
-	loadTaxo   bool
-	taxoReport bool
-	rebootTaxo bool
-	intoTaxo bool
+	db          dbops.DB
+	parseIH08   bool
+	loadTaxo    bool
+	taxoReport  bool
+	rebootTaxo  bool
+	intoTaxo    bool
 )
 
 func init() {
@@ -49,7 +49,7 @@ func main() {
 
 	flag.Parse()
 	if rebootTaxo {
-		dbops.DeleteTablesExcept(db, []string{"IH08", "IH08F"})
+		dbops.DeleteTablesExcept(db, []string{"IH08", "IH08F", "Clases"})
 	}
 
 	dbops.InitDB()
@@ -79,7 +79,7 @@ func main() {
 
 	if loadTaxo {
 		var ih08f []schema.IH08FPost
-		err := db.DB.Select(&ih08f, "SELECT * FROM IH08F")
+		err := db.DB.Select(&ih08f, "SELECT * FROM IH08F WHERE equipo<2000000000")
 		if err != nil {
 			log.Fatal("WHILE LOADING => ", err)
 		}
