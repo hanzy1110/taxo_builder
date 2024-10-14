@@ -6,3 +6,6 @@ pq/
 LOGS/
 DB/
 datos/
+report/
+DUMP/
+*.exe
