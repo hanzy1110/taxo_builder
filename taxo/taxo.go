@@ -54,7 +54,7 @@ func init() {
 
 		"APE EMS": "Viales",
 		"APE TTP": "Piping",
-		"APE TSN": "EspecialesPesado",
+		"APE TSN": "Viales",
 		"APE EOG": "EqObrGral",
 		"TEL ETC": "TendidoElectricoCabrestante",
 		"AUX TDA": "AUXTDuctos",
@@ -88,6 +88,9 @@ func getClaseEq(ih08p schema.IH08FPost) (out ClasesEquipo) {
 		out = ClasesEquipo{Nombre: "ADV"}
 	case strings.Contains(ih08p.DenominacionEquipo, "ROLO"):
 		out = ClasesEquipo{Nombre: "ADV"}
+	case strings.Contains(ih08p.DenominacionEquipo, "AXION"):
+		out = ClasesEquipo{Nombre: "ADV"}
+
 	case strings.Contains(ih08p.DenominacionEquipo, "HIDROGR"):
 		if !strings.Contains(ih08p.DenominacionEquipo, "ELEVADOR") {
 			out = ClasesEquipo{Nombre: "ADV"}
@@ -98,6 +101,14 @@ func getClaseEq(ih08p schema.IH08FPost) (out ClasesEquipo) {
 	case strings.Contains(ih08p.DenominacionEquipo, "TANQUE"):
 		switch {
 		case strings.Contains(ih08p.DenominacionEquipo, "ACOPLADO"):
+			if ih08p.DenominacionEquipo == "ACOPLADOR" {
+				out = ClasesEquipo{Nombre: ih08p.Tipo2}
+			} else {
+				out = ClasesEquipo{Nombre: "PES"}
+			}
+		case strings.Contains(ih08p.DenominacionEquipo, "SEMIRREMOLQUE"):
+			out = ClasesEquipo{Nombre: "PES"}
+		case strings.Contains(ih08p.DenominacionEquipo, "CARRETON"):
 			out = ClasesEquipo{Nombre: "PES"}
 		case strings.Contains(ih08p.DenominacionEquipo, "TANQUES ACEITE"):
 			out = ClasesEquipo{Nombre: ih08p.Tipo2}
@@ -113,13 +124,9 @@ func getClaseEq(ih08p schema.IH08FPost) (out ClasesEquipo) {
 
 	case strings.Contains(ih08p.DenominacionEquipo, "VOLCADORA"):
 		out = ClasesEquipo{Nombre: "ADV"}
-	case strings.Contains(ih08p.DenominacionEquipo, "COMPACTADOR"):
-		out = ClasesEquipo{Nombre: "ADV"}
 	case strings.Contains(ih08p.DenominacionEquipo, "COMPACTADOR DE CARGA"):
 		out = ClasesEquipo{Nombre: "ADV"}
 	case strings.Contains(ih08p.DenominacionEquipo, "ENGRASE"):
-		out = ClasesEquipo{Nombre: "ADV"}
-	case strings.Contains(ih08p.DenominacionEquipo, "PRESENTADOR DE CAÑOS"):
 		out = ClasesEquipo{Nombre: "ADV"}
 	case strings.Contains(ih08p.DenominacionEquipo, "HOYADORA"):
 		out = ClasesEquipo{Nombre: "ADV"}
@@ -133,6 +140,8 @@ func getClaseEq(ih08p schema.IH08FPost) (out ClasesEquipo) {
 	case strings.Contains(ih08p.DenominacionEquipo, "MINICARGADORA"):
 		out = ClasesEquipo{Nombre: "APE"}
 	case strings.Contains(ih08p.DenominacionEquipo, "MINZANJADORA"):
+		out = ClasesEquipo{Nombre: "APE"}
+	case strings.Contains(ih08p.DenominacionEquipo, "COMPACTADOR VIBRATORIO"):
 		out = ClasesEquipo{Nombre: "APE"}
 
 	case strings.Contains(ih08p.DenominacionEquipo, "CAMION"):
@@ -159,6 +168,27 @@ func getClaseEq(ih08p schema.IH08FPost) (out ClasesEquipo) {
 		out = ClasesEquipo{Nombre: "LIV"}
 	case strings.Contains(ih08p.DenominacionEquipo, "PICK-UP"):
 		out = ClasesEquipo{Nombre: "LIV"}
+
+	case strings.Contains(ih08p.DenominacionEquipo, "PRESENTADOR DE CAÑOS"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "PRESENTADOR NEUMATICO"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "DOBLADORA"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "CONTAINER"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "TRAILER"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "BOMBA"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "GRUPO ELECTROG"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "MOTOSOLDADORA"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "SOLDADORA"):
+		out = ClasesEquipo{Nombre: "AUX"}
+	case strings.Contains(ih08p.DenominacionEquipo, "SOLD. ELEC."):
+		out = ClasesEquipo{Nombre: "AUX"}
 
 	default:
 		out = ClasesEquipo{Nombre: ih08p.Tipo2}
@@ -237,8 +267,16 @@ func get_t2(ih08p schema.IH08FPost, t1 ClasesEquipo) (t T2Builder, err error) {
 		case strings.Contains(ih08p.DenominacionEquipo, "HIDROG"):
 			t = NewAditamentoVehiculo("ADC")
 
+		case strings.Contains(ih08p.DenominacionEquipo, "AXION"):
+			t = NewAditamentoVehiculo("ADC")
+
 		case strings.Contains(ih08p.DenominacionEquipo, "MIDWEST"):
-			t = NewAditamentoVehiculo("ADT")
+			switch {
+			case strings.Contains(ih08p.DenominacionEquipo, "TIENDETUBOS"):
+				t = NewAditamentoVehiculo("APE")
+			default:
+				t = NewAditamentoVehiculo("ADT")
+			}
 
 		case strings.Contains(ih08p.DenominacionEquipo, "TANQUE"):
 			switch {
@@ -274,6 +312,8 @@ func get_t2(ih08p schema.IH08FPost, t1 ClasesEquipo) (t T2Builder, err error) {
 			t = NewAmarilloPesado("EOG")
 		case strings.Contains(ih08p.DenominacionEquipo, "TIENDETUBOS"):
 			t = NewAmarilloPesado("TTP")
+		case strings.Contains(ih08p.DenominacionEquipo, "COMPACTADOR VIBRATORIO"):
+			t = NewAmarilloPesado("EMS")
 		default:
 			t = NewAmarilloPesado(ih08p.Tipo25)
 		}
@@ -307,7 +347,30 @@ func get_t2(ih08p schema.IH08FPost, t1 ClasesEquipo) (t T2Builder, err error) {
 	case "TEL":
 		t = NewTendidoElectrico(ih08p.Tipo25)
 	case "AUX":
-		t = NewAuxiliares(ih08p.Tipo25)
+		switch {
+		case strings.Contains(ih08p.DenominacionEquipo, "CONTAINER"):
+			t = NewAuxiliares("TRC")
+		case strings.Contains(ih08p.DenominacionEquipo, "GRUPO ELECTROG"):
+			t = NewAuxiliares("AXL")
+		case strings.Contains(ih08p.DenominacionEquipo, "TRAILER"):
+			t = NewAuxiliares("TRC")
+		case strings.Contains(ih08p.DenominacionEquipo, "DOBLADORA"):
+			t = NewAuxiliares("TDA")
+		case strings.Contains(ih08p.DenominacionEquipo, "PRESENTADOR DE CAÑOS"):
+			t = NewAuxiliares("TDA")
+		case strings.Contains(ih08p.DenominacionEquipo, "PRESENTADOR NEUMATICO"):
+			t = NewAuxiliares("TDA")
+		case strings.Contains(ih08p.DenominacionEquipo, "BOMBA"):
+			t = NewAuxiliares("TDA")
+		case strings.Contains(ih08p.DenominacionEquipo, "SOLDADORA"):
+			t = NewAuxiliares("AXL")
+		case strings.Contains(ih08p.DenominacionEquipo, "SOLD. ELEC."):
+			t = NewAuxiliares("AXL")
+		case strings.Contains(ih08p.DenominacionEquipo, "MOTOSOLDADORA"):
+			t = NewAuxiliares("AXL")
+		default:
+			t = NewAuxiliares(ih08p.Tipo25)
+		}
 	default:
 		err = fmt.Errorf("INVALID TYPE!!")
 	}
@@ -420,7 +483,7 @@ func get_t3(ih08p schema.IH08FPost, t2 T2Builder, db dbops.DB) (T3Builder, error
 		return eq, nil
 
 	case "APE TSN":
-		eq := &EspecialesPesado{}
+		eq := &Viales{}
 		eq.BuildT3(ih08p, db)
 		return eq, nil
 

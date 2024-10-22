@@ -734,8 +734,8 @@ func (v *Acoplado) BuildT3(ih08p schema.IH08FPost, db dbops.DB) {
 
 	v.Aditamento = aditamento.DenominacionEquipo
 	v.Capacidad = getCapacidad(ih08p)
-	v.Modelo = ih08p.DenominacionEquipo
-	v.Tipo = ih08p.Tipo3
+	v.Modelo = getDenomACS(ih08p.DenominacionEquipo)
+	v.Tipo = getTipoACS(ih08p)
 	v.CantEjes = getEjes(ih08p)
 }
 
@@ -784,6 +784,39 @@ func getEjes(ih08p schema.IH08FPost) string {
 		return m[1]
 	}
 	return ""
+}
+
+func getDenomACS(d string) string {
+	if strings.Contains(d, "SEMIREMOLQUE") {
+		return strings.ReplaceAll(d, "SEMIREMOLQUE", "SEMIRREMOLQUE")
+	}
+	return d
+}
+func getTipoACS(ih08p schema.IH08FPost) sql.NullString {
+
+	d := strings.ReplaceAll(ih08p.DenominacionEquipo,
+		"SEMIREMOLQUE", "SEMIRREMOLQUE")
+
+	switch {
+	case strings.Contains(d, "SEMIRREMOLQUE TANQUE"):
+		return sql.NullString{String: "SRT", Valid: true}
+	case strings.Contains(d, "SEMIRREMOLQUE VOLCADOR"):
+		return sql.NullString{String: "SVL", Valid: true}
+	case strings.Contains(d, "SEMIRREMOLQUE VUELCO"):
+		return sql.NullString{String: "SVL", Valid: true}
+	case strings.Contains(d, "SEMIRREMOLQUE CISTERNA"):
+		return sql.NullString{String: "SRT", Valid: true}
+	case strings.Contains(d, "SEMIRREMOLQUE"):
+		return sql.NullString{String: "SAC", Valid: true}
+	case strings.Contains(d, "CISTERNA"):
+		return sql.NullString{String: "ATS", Valid: true}
+	case strings.Contains(d, "CARRETON"):
+		return sql.NullString{String: "CAR", Valid: true}
+	case strings.Contains(d, "TANQUE"):
+		return sql.NullString{String: "ATS", Valid: true}
+	default:
+		return sql.NullString{String: "ACP", Valid: true}
+	}
 }
 
 //--*--//
